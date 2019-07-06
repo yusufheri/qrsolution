@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/qrlogo" />
+    </LinearLayout>
+    <TextView
+        android:layout_above="@+id/copyright"
+        android:textSize="@dimen/width_15"
+        android:layout_margin="@dimen/width_5"
+        android:textStyle="bold"
+        android:textColor="@color/black_55_percent"
+        android:gravity="center"
+        android:text="QrSolution v1.0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_above="@+id/arr"
+        android:id="@+id/copyright"
+        android:textSize="@dimen/width_10"
+        android:layout_margin="@dimen/width_5"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"
+        android:gravity="center"
+        android:text="Copyright 2017-2019 ENYWORK SARL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:fontFamily="casual"
+        android:textStyle="bold"
+        android:textSize="@dimen/width_15"
+        android:id="@+id/arr"
+        android:textColor="@color/black_55_percent"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:text="All rights reserved."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

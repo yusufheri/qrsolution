@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#F50040</color>
+    <color name="colorPrimaryDark">#F8BB1106</color>
+    <color name="colorAccent">@color/colorPrimaryDark</color>
+
+    <color name="background">#FAFAFA</color>
+    <color name="textViewBackground">#F4F4F4</color>
+    <color name="projectGreen">#F50039</color>
+
+    <color name="bottom_bar_normal">@color/colorPrimary</color>
+    <color name="bottom_bar_selected">@color/colorPrimaryDark</color>
+
+    <color name="sectionSeparator">#E3E3E3</color>
+
+    <color name="disabled_gradient_start">@color/colorAccent</color>
+    <color name="disabled_gradient_end">@color/colorPrimaryDark</color>
+
+    <color name="text_subtitle">#8D8D8D</color>
+    <color name="text_regular">#000000</color>
+    <color name="text_hint">@color/white</color>
+
+    <color name="white">#ffffff</color>
+    <color name="white_70_percent">#B2ffffff</color>
+
+    <color name="black_0_percent">#00000000</color>
+    <color name="black_10_percent">#1A000000</color>
+    <color name="black_20_percent">#33000000</color>
+    <color name="black_55_percent">#8D000000</color>
+    <color name="black_60_percent">#8A000000</color>
+    <color name="black_70_percent">#B3000000</color>
+    <color name="black">#000000</color>
+
+    <color name="shadow">#d0d8dc</color>
+    <color name="transparent">#00000000</color>
+</resources>
