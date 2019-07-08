@@ -11,8 +11,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,53 +53,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setListeners();
         initializeToolbar();
         initializeBottomBar();
-        checkInternetConnection();
-        playAd();
-    }
-
-    private void checkInternetConnection() {
-        CompositeDisposable disposable = new CompositeDisposable();
-        disposable.add(ReactiveNetwork
-                .observeNetworkConnectivity(this)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(connectivity -> {
-                    if (connectivity.state() == NetworkInfo.State.CONNECTED) {
-                        mBinding.adView.setVisibility(View.VISIBLE);
-                    } else {
-                        mBinding.adView.setVisibility(View.GONE);
-                    }
-
-                }, throwable -> {
-                    Toast.makeText(this, getString(R.string.something_wrong), Toast.LENGTH_SHORT).show();
-                }));
-    }
-
-    private void playAd() {
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mBinding.adView.loadAd(adRequest);
-        mBinding.adView.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-            }
-
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                mBinding.adView.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAdOpened() {
-            }
-
-            @Override
-            public void onAdLeftApplication() {
-            }
-
-            @Override
-            public void onAdClosed() {
-            }
-        });
+        //checkInternetConnection();
+        //playAd();
     }
     private void initializeToolbar() {
         setSupportActionBar(mBinding.toolbar);

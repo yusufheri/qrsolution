@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import qrcoba.w3engineers.com.qrcoba.LoginActivity;
 import qrcoba.w3engineers.com.qrcoba.R;
 import qrcoba.w3engineers.com.qrcoba.ui.home.HomeActivity;
 
@@ -33,7 +34,7 @@ public class SplashActivity extends AppCompatActivity {
     }
     private void goToMainPage() {
         new Handler().postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, HomeActivity.class));
+            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
             finish();
         }, SPLASH_DELAY);
     }
