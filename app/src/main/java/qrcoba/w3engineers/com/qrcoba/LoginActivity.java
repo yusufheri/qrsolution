@@ -1,8 +1,10 @@
 package qrcoba.w3engineers.com.qrcoba;
 
 import androidx.appcompat.app.AppCompatActivity;
+import qrcoba.w3engineers.com.qrcoba.ui.home.HomeActivity;
 import qrcoba.w3engineers.com.qrcoba.ui.scanresult.ScanResultActivity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +28,7 @@ import java.util.List;
 public class LoginActivity extends AppCompatActivity {
     private EditText username, psw ;
     private Button btnReset, btnLogin;
-    String DataParseUrl;
+    String DataParseUrl = "http://192.168.43.124/qrsolution/test.php";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +50,9 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                String params[] = {username.getText().toString(), psw.getText().toString()};
+                LoginAsyncTask loginAsyncTask = new LoginAsyncTask();
+                loginAsyncTask.execute(params);
             }
         });
     }
@@ -86,17 +90,31 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String checkResponse) {
             super.onPostExecute(checkResponse);
-            Log.e("TEST", checkResponse);
 
-            if (checkResponse.equals("1")){
-                Toast.makeText(LoginActivity.this, "Bien enregistré", Toast.LENGTH_SHORT).show();
+            if (isInteger(checkResponse)){
+                username.setText("");
+                psw.setText("");
+                Intent home = new Intent(LoginActivity.this, HomeActivity.class);
+                home.putExtra("num", Integer.getInteger(checkResponse));
+                startActivity(home);
             }else {
-                //Non enregistré
-                Toast.makeText(LoginActivity.this, checkResponse, Toast.LENGTH_SHORT).show();
+                if (checkResponse.contains("recommencer")) { psw.setText(""); }
+                Toast.makeText(LoginActivity.this, checkResponse, Toast.LENGTH_LONG).show();
             }
-            //Toast.makeText(ScanResultActivity.this, "Doneés envoyée avec succée !", Toast.LENGTH_LONG).show();
-
         }
+        public boolean isInteger( String input )
+        {
+            try
+            {
+                Integer.parseInt( input );
+                return true;
+            }
+            catch( Exception e)
+            {
+                return false;
+            }
+        }
+
     }
 
 

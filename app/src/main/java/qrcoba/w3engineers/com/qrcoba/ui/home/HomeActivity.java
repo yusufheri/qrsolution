@@ -1,6 +1,7 @@
 package qrcoba.w3engineers.com.qrcoba.ui.home;
 
 import android.Manifest;
+import android.app.Application;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.NetworkInfo;
@@ -56,6 +57,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         //checkInternetConnection();
         //playAd();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finish();
+    }
+
+
+
     private void initializeToolbar() {
         setSupportActionBar(mBinding.toolbar);
     }

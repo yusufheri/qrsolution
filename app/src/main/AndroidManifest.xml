@@ -22,7 +22,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".Parametre"></activity>
+        <activity android:name=".LoginActivity" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
