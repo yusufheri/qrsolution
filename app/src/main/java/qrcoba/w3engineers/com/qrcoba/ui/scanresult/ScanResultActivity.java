@@ -48,6 +48,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
+import qrcoba.w3engineers.com.qrcoba.LoginActivity;
+import qrcoba.w3engineers.com.qrcoba.Parametre;
 import qrcoba.w3engineers.com.qrcoba.R;
 import qrcoba.w3engineers.com.qrcoba.databinding.ActivityScanResultBinding;
 import qrcoba.w3engineers.com.qrcoba.helpers.constant.IntentKey;
@@ -94,76 +96,61 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
     EditText edCote;
     TextView edIdentifiant, valider, tToken;
     String getIdentifiant, getCote, getToken ;
-    String DataParseUrl, dataUrl, spToken;
+    String dataUrl, spToken;
+
+    SharedPreferences sharedpreferences;
+    String DataParseUrl, UrlServer, num;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_scan_result);
         setCompositeDisposable(new CompositeDisposable());
-    //    playAd();
+
         getWindow().setBackgroundDrawable(null);
         initializeToolbar();
         loadQRCode();
         setListeners();
-        //checkInternetConnection();
+
         TextView textViewsend = findViewById(R.id.text_view_send);
         edIdentifiant = findViewById(R.id.text_view_content);
         edCote = findViewById(R.id.edittext_cote);
-        Toast.makeText(this, SharedPrefUtil.readString(PreferenceKey.QR_TOKEN + ""), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, SharedPrefUtil.readString(PreferenceKey.QR_TOKEN + ""), Toast.LENGTH_SHORT).show();
 
         textViewsend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                preference = getSharedPreferences(PreferenceKey.MY_PREFERENCE,
-                        Context.MODE_PRIVATE);
+                sharedpreferences = getSharedPreferences("myPref",Context.MODE_PRIVATE);
+                if (sharedpreferences.contains("IP")) {
+                    DataParseUrl =  sharedpreferences.getString("IP", "");
+                }
+                if (sharedpreferences.contains("num")) {
+                    num =  sharedpreferences.getString("num", "");
+                }
 
-                if (preference.contains(PreferenceKey.URL_IP)) {
-                    dataUrl = preference.getString(PreferenceKey.URL_IP, "");
-                    DataParseUrl = "http://"+dataUrl+"/qrsolution/index.php";
-
-                    if (preference.contains(PreferenceKey.QR_TOKEN)){
+                if (DataParseUrl.isEmpty()) {
+                    Intent intent= new Intent(getApplicationContext(), Parametre.class);
+                    startActivity(intent);
+                } else {
+                    if (num.isEmpty()) {
+                        Intent intent= new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(intent);
+                    } else {
+                        UrlServer = "http://" + DataParseUrl + "/qrsolution/index.php";
                         GetDataFromEditText();
 
-                        String params[] = {getIdentifiant, getCote, getToken};
+                        String params[] = {getIdentifiant, getCote, getToken, num};
                         SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
                         sendPostReqAsyncTask.execute(params);
-                    }else {
-                        Toast.makeText(ScanResultActivity.this, "Configurer Token", Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(ScanResultActivity.this, "Veuillez d'abord inserer une adrese valide", Toast.LENGTH_SHORT).show();
-                } finish();
+
+
+                }
+                finish();
             }
         });
     }
- //  private void playAd() {
- //      AdRequest adRequest = new AdRequest.Builder().build();
- //      mBinding.adView.loadAd(adRequest);
- //      mBinding.adView.setAdListener(new AdListener() {
- //          @Override
- //          public void onAdLoaded() {
- //          }
-
- //          @Override
- //          public void onAdFailedToLoad(int errorCode) {
- //              mBinding.adView.setVisibility(View.GONE);
- //          }
-
- //          @Override
- //          public void onAdOpened() {
- //          }
-
- //          @Override
- //          public void onAdLeftApplication() {
- //          }
-
- //          @Override
- //          public void onAdClosed() {
- //          }
- //      });
- //  }
 
     private void setListeners() {
         mBinding.textViewOpenInBrowser.setOnClickListener(this);
@@ -323,8 +310,8 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
     public void GetDataFromEditText(){
         getCote = edCote.getText().toString();
         getIdentifiant = edIdentifiant.getText().toString();
-        getToken = preference.getString(PreferenceKey.QR_TOKEN,"");
-        Toast.makeText(this, SharedPrefUtil.readString(PreferenceKey.QR_TOKEN), Toast.LENGTH_SHORT).show();
+        //getToken = preference.getString(PreferenceKey.QR_TOKEN,"");
+        //Toast.makeText(this, SharedPrefUtil.readString(PreferenceKey.QR_TOKEN), Toast.LENGTH_SHORT).show();
     }
     //Envoie de donées
 
@@ -337,28 +324,28 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
                 String _id = params[0] ;
                 String _cote = params[1] ;
                 String _token = params[2];
+                String _num = params[3];
                 String checkResponse = "";
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-
-
 
                 nameValuePairs.add(new BasicNameValuePair("id", _id));
                 nameValuePairs.add(new BasicNameValuePair("cote", _cote));
                 nameValuePairs.add(new BasicNameValuePair("token", _token));
+                nameValuePairs.add(new BasicNameValuePair("n", _num));
 
                 try {
-
+                    Log.e("URL", UrlServer);
                     DefaultHttpClient httpClient = new DefaultHttpClient();
-                    HttpPost httpPost = new HttpPost(DataParseUrl);
+                    HttpPost httpPost = new HttpPost(UrlServer);
                     httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                     HttpResponse response = httpClient.execute(httpPost);
                     checkResponse = EntityUtils.toString(response.getEntity());
 
 
                 }
-                //catch (ClientProtocolException e) {
+                catch (ClientProtocolException e) {
 
-                //}
+                }
                 catch (IOException e) {
                     Log.e("IOException", e.getMessage());
                 }
@@ -369,14 +356,26 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
                 super.onPostExecute(checkResponse);
                 Log.e("TEST", checkResponse);
 
-                if (checkResponse.equals("1")){
+                if (isInteger(checkResponse)){
                     Toast.makeText(ScanResultActivity.this, "Bien enregistré", Toast.LENGTH_SHORT).show();
                 }else {
                     //Non enregistré
                     Toast.makeText(ScanResultActivity.this, checkResponse, Toast.LENGTH_SHORT).show();
                 }
-                //Toast.makeText(ScanResultActivity.this, "Doneés envoyée avec succée !", Toast.LENGTH_LONG).show();
 
+            }
+
+            public boolean isInteger( String input )
+            {
+                try
+                {
+                    Integer.parseInt( input );
+                    return true;
+                }
+                catch( Exception e)
+                {
+                    return false;
+                }
             }
         }
 

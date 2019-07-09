@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import qrcoba.w3engineers.com.qrcoba.ui.home.HomeActivity;
 import qrcoba.w3engineers.com.qrcoba.ui.scanresult.ScanResultActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,8 +29,10 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText username, psw ;
-    private Button btnReset, btnLogin;
-    String DataParseUrl = "http://192.168.43.124/qrsolution/test.php";
+    private Button btnReset, btnLogin,btnParametre;
+    SharedPreferences sharedpreferences;
+    //String DataParseUrl = "http://192.168.43.124/qrsolution/test.php";
+    String DataParseUrl, UrlServer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +42,25 @@ public class LoginActivity extends AppCompatActivity {
         psw = (EditText) findViewById(R.id.psw);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnReset = (Button) findViewById(R.id.btnReset);
+        btnParametre = (Button) findViewById(R.id.btnParametre);
+
+        sharedpreferences = getSharedPreferences("myPref",Context.MODE_PRIVATE);
+        if (sharedpreferences.contains("IP")) {
+            DataParseUrl =  sharedpreferences.getString("IP", "");
+        }
+
+        if (DataParseUrl.isEmpty()) {
+            Intent intent= new Intent(LoginActivity.this, Parametre.class);
+            startActivity(intent);
+        } else { UrlServer = "http://" + DataParseUrl + "/qrsolution/test.php"; }
+
+        btnParametre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(LoginActivity.this, Parametre.class);
+                startActivity(intent);
+            }
+        });
 
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
             try {
 
                 DefaultHttpClient httpClient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(DataParseUrl);
+                HttpPost httpPost = new HttpPost(UrlServer);
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = httpClient.execute(httpPost);
                 checkResponse = EntityUtils.toString(response.getEntity());
@@ -92,10 +115,15 @@ public class LoginActivity extends AppCompatActivity {
             super.onPostExecute(checkResponse);
 
             if (isInteger(checkResponse)){
+
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString("num", checkResponse);
+                editor.commit();
+
                 username.setText("");
                 psw.setText("");
+
                 Intent home = new Intent(LoginActivity.this, HomeActivity.class);
-                home.putExtra("num", Integer.getInteger(checkResponse));
                 startActivity(home);
             }else {
                 if (checkResponse.contains("recommencer")) { psw.setText(""); }

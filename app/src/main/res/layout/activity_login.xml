@@ -95,16 +95,27 @@
                     android:text="Login"/>
             </LinearLayout>
 
-            <TextView
-                android:layout_alignParentBottom="true"
+
+            <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/liner1"
+                android:id="@+id/btnParametre"
+                android:layout_margin="10dp"
+                android:textAlignment="center"
+                android:text="Paramètre"/>
+            <TextView
+                android:id="@+id/designed"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btnParametre"
                 android:fontFamily="@font/opensans_regular"
                 android:text="Designed by ENYWORK"
                 android:textAlignment="center"
                 android:textSize="14sp"
                 android:textColor="#000"></TextView>
+
         </RelativeLayout>
 
     </ScrollView>
