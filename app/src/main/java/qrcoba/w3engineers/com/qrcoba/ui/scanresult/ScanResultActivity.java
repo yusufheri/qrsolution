@@ -115,16 +115,18 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
         TextView textViewsend = findViewById(R.id.text_view_send);
         edIdentifiant = findViewById(R.id.text_view_content);
         edCote = findViewById(R.id.edittext_cote);
-        //Toast.makeText(this, SharedPrefUtil.readString(PreferenceKey.QR_TOKEN + ""), Toast.LENGTH_SHORT).show();
+
+        sharedpreferences = getSharedPreferences("myPref",Context.MODE_PRIVATE);
+        if (sharedpreferences.contains("IP")) {
+            DataParseUrl =  sharedpreferences.getString("IP", "");
+        }
+
+        //Toast.makeText(this, "OnCreate : " + edIdentifiant.getText().toString(), Toast.LENGTH_LONG).show();
 
         textViewsend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                sharedpreferences = getSharedPreferences("myPref",Context.MODE_PRIVATE);
-                if (sharedpreferences.contains("IP")) {
-                    DataParseUrl =  sharedpreferences.getString("IP", "");
-                }
                 if (sharedpreferences.contains("num")) {
                     num =  sharedpreferences.getString("num", "");
                 }
@@ -150,6 +152,16 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Toast.makeText(this, "Resume : " + edIdentifiant.getText().toString(), Toast.LENGTH_LONG).show();
+
+        String params2[] = {edIdentifiant.getText().toString()};
+        RecoverDataAsyncTask recoverDataAsyncTask = new RecoverDataAsyncTask();
+        recoverDataAsyncTask.execute(params2);
     }
 
     private void setListeners() {
@@ -310,12 +322,8 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
     public void GetDataFromEditText(){
         getCote = edCote.getText().toString();
         getIdentifiant = edIdentifiant.getText().toString();
-        //getToken = preference.getString(PreferenceKey.QR_TOKEN,"");
-        //Toast.makeText(this, SharedPrefUtil.readString(PreferenceKey.QR_TOKEN), Toast.LENGTH_SHORT).show();
     }
     //Envoie de donées
-
-
 
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
             @Override
@@ -379,6 +387,65 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
             }
         }
 
+
+        class RecoverDataAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            String _id = params[0] ;
+            String checkResponse = "";
+            List<NameValuePair> nameValuePairs2 = new ArrayList<NameValuePair>();
+
+            nameValuePairs2.add(new BasicNameValuePair("id", _id));
+            Log.e("RECOVER", _id);
+
+            try {
+
+                DefaultHttpClient httpClient = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost("http://" + DataParseUrl + "/qrsolution/recover.php");
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs2));
+                HttpResponse response = httpClient.execute(httpPost);
+                checkResponse = EntityUtils.toString(response.getEntity());
+
+
+            }
+            catch (ClientProtocolException e) {
+
+            }
+            catch (IOException e) {
+                Log.e("IOException", e.getMessage());
+            }
+            return checkResponse;
+        }
+        @Override
+        protected void onPostExecute(String checkResponse) {
+            super.onPostExecute(checkResponse);
+            Log.e("TEST", checkResponse);
+
+            if (isInteger(checkResponse)){
+                int val = Integer.parseInt(checkResponse);
+                if (val > -1) {
+                    edCote.setText(String.valueOf(val));
+                    edCote.setEnabled(false);
+                } else { edCote.setEnabled(true);}
+
+            }
+
+        }
+
+        public boolean isInteger( String input )
+        {
+            try
+            {
+                Integer.parseInt( input );
+                return true;
+            }
+            catch( Exception e)
+            {
+                return false;
+            }
+        }
+    }
 
 
 }
