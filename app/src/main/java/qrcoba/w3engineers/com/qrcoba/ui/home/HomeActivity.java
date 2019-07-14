@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,10 +66,33 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         finish();
     }
 
+    boolean twice = false;
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        
+        Log.e("TAG", "Click back");
+
+        if (twice  == true) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+            System.exit(0);
+        }
+
+        twice = true;
+        Log.e("Twice", "Twice : "+twice);
+
+        Toast.makeText(HomeActivity.this, "Appuyer encore pour quitter",Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                twice = false;
+                Log.e("Twice", "Twice : "+twice);
+            }
+        }, 3000);
+        //super.onBackPressed();
+
     }
 
     private void initializeToolbar() {
