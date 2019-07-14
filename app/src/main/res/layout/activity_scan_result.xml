@@ -45,21 +45,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:visibility="gone"
-                    android:id="@+id/image_view_scanned_code"
-                    android:layout_width="@dimen/width_250"
-                    android:layout_height="@dimen/height_250"
-                   android:layout_marginTop="@dimen/margin_32"
-                    android:layout_marginEnd="@dimen/margin_32"
-                    android:layout_marginStart="@dimen/margin_32"
-                    android:layout_marginBottom="@dimen/margin_16"
-                    app:layout_constraintBottom_toTopOf="@+id/card_view_description"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="ContentDescription" />
-
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_view_description"
                     android:layout_width="0dp"
@@ -69,10 +54,9 @@
                     android:background="@color/white"
                     app:cardElevation="@dimen/elevation_2"
                     app:cardUseCompatPadding="true"
-                    app:layout_constraintBottom_toTopOf="@+id/text_view_open_in_browser"
+                    app:layout_constraintBottom_toTopOf="@+id/image_view_scanned_code"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/image_view_scanned_code">
+                    app:layout_constraintStart_toStartOf="parent">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -106,62 +90,79 @@
                             app:layout_constraintTop_toBottomOf="@+id/text_view_type" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-
-
-                    <TextView
-                        android:layout_marginTop="@dimen/margin_8"
-                        android:textStyle="bold"
-                        android:text="COTE DE L'ETUDIANT"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textColor="@color/text_regular"
-                        android:textSize="@dimen/text_body" />
-                    <EditText
-                        android:inputType="numberDecimal"
-                        android:background="@drawable/custom_gradient_button_background_selector"
-                        android:id="@+id/edittext_cote"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/width_40"
-                        android:layout_marginTop="@dimen/margin_8"
-                        android:gravity="center"
-                        android:hint="Cote de l'étudiant"
-                        android:textColor="@color/text_regular"
-                        android:textColorHint="@color/text_hint"
-                        android:textSize="@dimen/text_body" />
-
-    <TextView
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:id="@+id/text_view_send"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_16"
-        android:layout_marginBottom="@dimen/margin_16"
-        android:background="@drawable/custom_gradient_button_background_selector"
-        android:gravity="center"
-        android:padding="@dimen/padding_16"
-        android:text="Envoyer"
-        android:textAllCaps="true"
-        android:textColor="@color/white" />
-
-    <TextView
-        android:text=""
-        android:id="@+id/text_view_content"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:textColor="@color/text_regular"
-        android:textSize="@dimen/text_body" />
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
 
 
-</LinearLayout>
+                                        <TextView
+                                            android:layout_marginTop="@dimen/margin_8"
+                                            android:textStyle="bold"
+                                            android:text="Résultat du scannage"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:textColor="@color/text_regular"
+                                            android:textSize="@dimen/text_large_title" />
+                                        <EditText
+                                            android:inputType="numberDecimal"
+                                            android:background="@drawable/custom_gradient_button_background_selector"
+                                            android:id="@+id/edittext_cote"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="@dimen/width_40"
+                                            android:layout_marginTop="@dimen/margin_8"
+                                            android:gravity="center"
+                                            android:hint="Cote de l'étudiant"
+                                            android:textColor="#FFF"
+                                            android:textColorHint="@color/text_hint"
+                                            android:textSize="@dimen/text_large_body" />
+
+                        <TextView
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentRight="true"
+                            android:id="@+id/text_view_send"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_16"
+                            android:layout_marginBottom="@dimen/margin_16"
+                            android:background="@drawable/custom_gradient_button_background_selector"
+                            android:gravity="center"
+                            android:padding="@dimen/padding_16"
+                            android:text="Envoyer"
+                            android:textAllCaps="true"
+                            android:textColor="@color/white" />
+
+                        <TextView
+                            android:text=""
+                            android:id="@+id/text_view_content"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:textColor="@color/text_regular"
+                            android:gravity="center"
+                            android:textSize="@dimen/text_body"
+                            android:visibility="invisible"/>
+
+
+
+                    </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:visibility="visible"
+                    android:id="@+id/image_view_scanned_code"
+                    android:layout_width="@dimen/width_250"
+                    android:layout_height="@dimen/height_250"
+                    android:layout_marginTop="@dimen/margin_32"
+                    android:layout_marginEnd="@dimen/margin_32"
+                    android:layout_marginStart="@dimen/margin_32"
+                    android:layout_marginBottom="@dimen/margin_16"
+                    app:layout_constraintBottom_toTopOf="@+id/text_view_open_in_browser"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:visibility="gone"
@@ -179,7 +180,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/card_view_description"
                     app:layout_constraintStart_toStartOf="@+id/card_view_description"
-                    app:layout_constraintTop_toBottomOf="@+id/card_view_description" />
+                    app:layout_constraintTop_toBottomOf="@+id/image_view_scanned_code" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -188,7 +189,7 @@
         <com.google.android.gms.ads.AdView
             android:id="@+id/adView"
             android:layout_width="0dp"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:background="@color/white"
             app:adSize="SMART_BANNER"
