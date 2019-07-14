@@ -64,7 +64,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         finish();
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        
+    }
 
     private void initializeToolbar() {
         setSupportActionBar(mBinding.toolbar);

@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginTop="200dp"
+                android:layout_marginTop="150dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 android:fontFamily="@font/opensans_regular"
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:layout_below="@+id/label1"
-                android:layout_marginBottom="25dp"
+                android:layout_marginBottom="15dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"/>
 
@@ -55,7 +55,7 @@
                 android:layout_below="@+id/username"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
-                android:layout_margin="25dp"
+                android:layout_marginTop="15dp"
                 android:fontFamily="@font/opensans_regular"
                 android:text="Password"
                 android:textSize="17sp"
@@ -69,12 +69,36 @@
                 android:layout_below="@+id/label2"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="15dp"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/label3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/psw"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/opensans_regular"
+                android:text="Token"
+                android:textSize="17sp"
+                android:textColor="#000"></TextView>
+
+            <EditText
+                android:id="@+id/token"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:layout_below="@+id/label3"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="15dp"
                 android:inputType="textPassword" />
 
             <LinearLayout
                 android:id="@+id/liner1"
-                android:layout_below="@+id/psw"
+                android:layout_below="@+id/token"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <Button

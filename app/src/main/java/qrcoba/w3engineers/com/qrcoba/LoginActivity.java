@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText username, psw ;
+    private EditText username, psw, token ;
     private Button btnReset, btnLogin,btnParametre;
     SharedPreferences sharedpreferences;
     //String DataParseUrl = "http://192.168.43.124/qrsolution/test.php";
@@ -38,11 +38,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        username = (EditText) findViewById(R.id.username);
-        psw = (EditText) findViewById(R.id.psw);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        btnReset = (Button) findViewById(R.id.btnReset);
-        btnParametre = (Button) findViewById(R.id.btnParametre);
+        username =  findViewById(R.id.username);
+        psw =  findViewById(R.id.psw);
+        token = findViewById(R.id.token);
+        btnLogin =  findViewById(R.id.btnLogin);
+        btnReset =  findViewById(R.id.btnReset);
+        btnParametre =  findViewById(R.id.btnParametre);
 
         sharedpreferences = getSharedPreferences("myPref",Context.MODE_PRIVATE);
         if (sharedpreferences.contains("IP")) {
@@ -73,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String params[] = {username.getText().toString(), psw.getText().toString()};
+                String params[] = {username.getText().toString(), psw.getText().toString(), token.getText().toString().trim()};
                 LoginAsyncTask loginAsyncTask = new LoginAsyncTask();
                 loginAsyncTask.execute(params);
             }
@@ -88,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
 
             String _username = params[0] ;
             String _password = params[1] ;
+            String _token = params[2] ;
             String checkResponse = "";
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
@@ -95,6 +97,7 @@ public class LoginActivity extends AppCompatActivity {
 
             nameValuePairs.add(new BasicNameValuePair("username", _username));
             nameValuePairs.add(new BasicNameValuePair("psw", _password));
+            nameValuePairs.add(new BasicNameValuePair("token", _token));
 
             try {
 
@@ -122,6 +125,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 username.setText("");
                 psw.setText("");
+                token.setText("");
 
                 Intent home = new Intent(LoginActivity.this, HomeActivity.class);
                 startActivity(home);
@@ -139,6 +143,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             catch( Exception e)
             {
+                Log.e("isInteger", e.getMessage());
                 return false;
             }
         }
