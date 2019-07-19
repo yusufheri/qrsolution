@@ -49,11 +49,16 @@ public class LoginActivity extends AppCompatActivity {
         if (sharedpreferences.contains("IP")) {
             DataParseUrl =  sharedpreferences.getString("IP", "");
         }
-
-        if (DataParseUrl.isEmpty()) {
+        try{
+            if (DataParseUrl.isEmpty()) {
+                Intent intent= new Intent(LoginActivity.this, Parametre.class);
+                startActivity(intent);
+            } else { UrlServer = "http://" + DataParseUrl + "/qrsolution/test.php"; }
+        } catch (Exception e){
             Intent intent= new Intent(LoginActivity.this, Parametre.class);
             startActivity(intent);
-        } else { UrlServer = "http://" + DataParseUrl + "/qrsolution/test.php"; }
+        }
+
 
         btnParametre.setOnClickListener(new View.OnClickListener() {
             @Override

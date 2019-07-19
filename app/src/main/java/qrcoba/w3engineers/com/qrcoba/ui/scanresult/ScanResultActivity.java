@@ -1,16 +1,20 @@
 package qrcoba.w3engineers.com.qrcoba.ui.scanresult;
 
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +29,9 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 
+import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.UploadNotificationConfig;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -34,11 +41,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -68,6 +81,31 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
     private Code mCurrentCode;
     private boolean mIsHistory, mIsPickedFromGallery;
     SharedPreferences preference;
+
+    //Uri to store the image uri
+    private String filePath;
+
+    Bitmap FixBitmap;
+
+    ProgressDialog progressDialog ;
+
+    ByteArrayOutputStream byteArrayOutputStream ;
+
+    byte[] byteArray ;
+
+    String ConvertImage ;
+
+    URL url;
+
+    OutputStream outputStream;
+
+    BufferedWriter bufferedWriter ;
+
+    int RC ;
+
+    BufferedReader bufferedReader ;
+
+    StringBuilder stringBuilder;
 
     public CompositeDisposable getCompositeDisposable() {
         return mCompositeDisposable;
@@ -116,6 +154,8 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
         edIdentifiant = findViewById(R.id.text_view_content);
         edCote = findViewById(R.id.edittext_cote);
 
+        byteArrayOutputStream = new ByteArrayOutputStream();
+
         sharedpreferences = getSharedPreferences("myPref",Context.MODE_PRIVATE);
         if (sharedpreferences.contains("IP")) {
             DataParseUrl =  sharedpreferences.getString("IP", "");
@@ -139,10 +179,20 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
                         Intent intent= new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(intent);
                     } else {
+
+
                         UrlServer = "http://" + DataParseUrl + "/qrsolution/index.php";
                         GetDataFromEditText();
 
-                        String params[] = {getIdentifiant, getCote, getToken, num};
+                        FixBitmap = ((BitmapDrawable)mBinding.imageViewScannedCode.getDrawable()).getBitmap();
+                        FixBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+
+                        byteArray = byteArrayOutputStream.toByteArray();
+
+                        ConvertImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+
+                        String params[] = {getIdentifiant, getCote, getToken, num, ConvertImage};
                         SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
                         sendPostReqAsyncTask.execute(params);
                     }
@@ -162,6 +212,8 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
         String params2[] = {edIdentifiant.getText().toString()};
         RecoverDataAsyncTask recoverDataAsyncTask = new RecoverDataAsyncTask();
         recoverDataAsyncTask.execute(params2);
+
+
     }
 
     private void setListeners() {
@@ -204,6 +256,7 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
                         .asBitmap()
                         .load(getCurrentCode().getCodeImagePath())
                         .into(mBinding.imageViewScannedCode);
+                filePath = getCurrentCode().getCodeImagePath();
             }
 
             if (SharedPrefUtil.readBooleanDefaultTrue(PreferenceKey.COPY_TO_CLIPBOARD)
@@ -216,8 +269,7 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
                             getCurrentCode().getContent());
                     clipboard.setPrimaryClip(clip);
 
-                    Toast.makeText(this, getString(R.string.copied_to_clipboard),
-                            Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, getString(R.string.copied_to_clipboard),Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -320,10 +372,44 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
 
 
     public void GetDataFromEditText(){
-        getCote = edCote.getText().toString();
+        getCote = edCote.getText().toString().trim();
         getIdentifiant = edIdentifiant.getText().toString();
     }
-    //Envoie de donées
+
+    /*
+     * This is the method responsible for image upload
+     * We need the full image path and all information for the image in this method
+     * */
+    public void uploadMultipart() {
+        String _user = num;
+        String _token = getToken;
+        String _id = edIdentifiant.getText().toString();
+        String _cote = edCote.getText().toString().trim();
+        String _path = filePath;
+
+        UrlServer = "http://" + DataParseUrl + "/qrsolution/index.php";
+
+        //Uploading code
+        try {
+            String uploadId = UUID.randomUUID().toString();
+
+            //Creating a multi part request
+            new MultipartUploadRequest(this, uploadId, UrlServer)
+                    .addFileToUpload(_path, "image") //Adding file
+                    .addParameter("token", _token)
+                    .addParameter("cote", _cote)
+                    .addParameter("id", _id)
+                    .addParameter("n", _user)
+                    //.setNotificationConfig(new UploadNotificationConfig())
+                    .setMaxRetries(2)
+                    .startUpload(); //Starting the upload
+
+        } catch (Exception exc) {
+            Toast.makeText(this, exc.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //Envoie de données
 
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
             @Override
@@ -333,6 +419,7 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
                 String _cote = params[1] ;
                 String _token = params[2];
                 String _num = params[3];
+                String _convertImage = params[4];
                 String checkResponse = "";
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
@@ -340,6 +427,7 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
                 nameValuePairs.add(new BasicNameValuePair("cote", _cote));
                 nameValuePairs.add(new BasicNameValuePair("token", _token));
                 nameValuePairs.add(new BasicNameValuePair("n", _num));
+                nameValuePairs.add(new BasicNameValuePair("image", _convertImage));
 
                 try {
                     Log.e("URL", UrlServer);
@@ -348,8 +436,6 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
                     httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                     HttpResponse response = httpClient.execute(httpPost);
                     checkResponse = EntityUtils.toString(response.getEntity());
-
-
                 }
                 catch (ClientProtocolException e) {
 
@@ -362,7 +448,9 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
             @Override
             protected void onPostExecute(String checkResponse) {
                 super.onPostExecute(checkResponse);
-                Log.e("TEST", checkResponse);
+                //progressDialog.dismiss();
+
+                Log.e("Response", checkResponse);
 
                 if (isInteger(checkResponse)){
                     Toast.makeText(ScanResultActivity.this, "Bien enregistré", Toast.LENGTH_SHORT).show();
@@ -373,7 +461,13 @@ public class ScanResultActivity extends AppCompatActivity implements View.OnClic
 
             }
 
-            public boolean isInteger( String input )
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                //progressDialog = ProgressDialog.show(getApplicationContext(),"Envoi des données en cours","Please Wait",false,false);
+            }
+
+            public boolean isInteger(String input )
             {
                 try
                 {
